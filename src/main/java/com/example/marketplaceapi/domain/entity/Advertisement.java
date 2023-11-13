@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 @Entity
 public class Advertisement {
 
@@ -34,17 +35,16 @@ public class Advertisement {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Advertisement(String title, String description, LocalDate creationDate, User user) {
+    public Advertisement(String title, String description, User user) {
         this.title = title;
         this.description = description;
-        this.creationDate = creationDate;
         this.user = user;
     }
 
     @PrePersist
     public void setDefaultExpirationDate() {
-        if (creationDate != null) {
-            this.expirationDate = creationDate.plusDays(10);
-        }
+        this.creationDate = LocalDate.now();
+        this.expirationDate = creationDate.plusDays(10);
+
     }
 }

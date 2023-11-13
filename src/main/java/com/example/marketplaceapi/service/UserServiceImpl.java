@@ -1,5 +1,6 @@
 package com.example.marketplaceapi.service;
 
+import com.example.marketplaceapi.converter.UserConverter;
 import com.example.marketplaceapi.domain.dto.UserDTOForm;
 import com.example.marketplaceapi.domain.dto.UserDTOView;
 import com.example.marketplaceapi.domain.entity.User;
@@ -16,10 +17,12 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserConverter userConverter;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserConverter userConverter) {
         this.userRepository = userRepository;
+        this.userConverter = userConverter;
     }
 
     @Override
@@ -27,10 +30,8 @@ public class UserServiceImpl implements UserService {
         if (userDTOForm == null) throw new IllegalArgumentException("user form is null.");
         boolean isExistEmail = userRepository.existsByEmail(userDTOForm.getEmail());
         if (isExistEmail) throw new DataDuplicateException("Email does already exist.");
-        User user = User.builder()
-                .email(userDTOForm.getEmail())
-                .password(userDTOForm.getPassword())
-                .build();
+
+        User user = userConverter.toUser(userDTOForm);
 
         User savedUser = userRepository.save(user);
         return UserDTOView.builder()
@@ -42,10 +43,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTOView getByEmail(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("Email does not exist."));
-        return UserDTOView.builder()
-                .userId(user.getUserId())
-                .email(user.getEmail())
-                .build();
+        return userConverter.toDTOView(user);
     }
 
     @Override
@@ -65,10 +63,7 @@ public class UserServiceImpl implements UserService {
         List<User> users = userRepository.findAll();
 
         return users.stream()
-                .map(user -> UserDTOView.builder()
-                        .userId(user.getUserId())
-                        .email(user.getEmail())
-                        .build())
+                .map(userConverter::toDTOView)
                 .collect(Collectors.toList());
     }
 
@@ -76,10 +71,7 @@ public class UserServiceImpl implements UserService {
     public UserDTOView update(UserDTOForm userDTOForm) {
         User user = userRepository.findById(userDTOForm.getId()).orElseThrow(() -> new DataNotFoundException("User Id is not valid."));
 
-        return UserDTOView.builder()
-                .userId(user.getUserId())
-                .email(user.getEmail())
-                .build();
+        return userConverter.toDTOView(user);
     }
 
 

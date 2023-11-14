@@ -1,4 +1,4 @@
-package com.example.marketplaceapi.domain.exception;
+package com.example.marketplaceapi.exception;
 
 public class DataNotFoundException extends RuntimeException {
 

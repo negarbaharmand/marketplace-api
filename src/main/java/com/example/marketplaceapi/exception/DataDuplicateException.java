@@ -1,4 +1,4 @@
-package com.example.marketplaceapi.domain.exception;
+package com.example.marketplaceapi.exception;
 
 public class DataDuplicateException extends RuntimeException{
     public DataDuplicateException(String message) {

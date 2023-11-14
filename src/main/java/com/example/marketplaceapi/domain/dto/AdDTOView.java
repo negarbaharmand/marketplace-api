@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class AdDTOView {
-    private Long adId;
+    private String adId;
     private String title;
     private String description;
     private LocalDate creationDate;

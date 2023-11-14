@@ -3,6 +3,7 @@ package com.example.marketplaceapi.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
 
@@ -16,8 +17,10 @@ import java.time.LocalDate;
 public class Advertisement {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long adId;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "ad_id", columnDefinition = "VARCHAR(255)")
+    private String adId;
 
     @Column(nullable = false)
     private String title;
@@ -35,6 +38,10 @@ public class Advertisement {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    //Shows if the ad is expired or not
+    @Column(nullable = false)
+    private boolean active = true;
+
     public Advertisement(String title, String description, User user) {
         this.title = title;
         this.description = description;
@@ -45,6 +52,8 @@ public class Advertisement {
     public void setDefaultExpirationDate() {
         this.creationDate = LocalDate.now();
         this.expirationDate = creationDate.plusDays(10);
+        System.out.println("Expiration Date: " + this.expirationDate);
+
 
     }
 }

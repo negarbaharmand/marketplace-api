@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 public class UserDTOView {
 
-    private Long userId;
+    private String userId;
     private String email;
 
 }

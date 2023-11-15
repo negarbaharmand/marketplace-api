@@ -8,9 +8,16 @@ import com.example.marketplaceapi.domain.dto.UserDTOView;
 import java.util.List;
 
 public interface AdService {
-AdDTOView createAd(AdDTOForm adDTOForm, UserDTOForm userDTOForm);
-List<AdDTOView> getAllAds();
-AdDTOView getAdById(Long id);
-void deleteAd(Long id);
+
+
+    AdDTOView createAd(AdDTOForm adDTOForm);
+
+    List<AdDTOView> getAllAds();
+
+    AdDTOView getAdById(String id);
+
+    List<AdDTOView> getActiveAdvertisements();
+
+    void deleteAd(String id);
 
 }

@@ -23,6 +23,7 @@ public class AdConverterImpl implements AdConverter{
                 .description(ad.getDescription())
                 .creationDate(ad.getCreationDate())
                 .expirationDate(ad.getExpirationDate())
+                .email(ad.getUser().getEmail())
                 .build();
     }
 

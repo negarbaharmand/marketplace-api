@@ -15,5 +15,6 @@ public class AdDTOView {
     private String description;
     private LocalDate creationDate;
     private LocalDate expirationDate;
+    private String email;
 
 }

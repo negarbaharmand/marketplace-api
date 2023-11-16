@@ -7,6 +7,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
 
+/**
+ * Advertisement Entity represents the advertisement table in the database.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,6 +19,9 @@ import java.time.LocalDate;
 @Entity
 public class Advertisement {
 
+    /**
+     * Unique identifier for an advertisement.
+     */
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -34,6 +40,9 @@ public class Advertisement {
     @Column(nullable = false)
     private LocalDate expirationDate;
 
+    /**
+     * User associated with the advertisement.
+     */
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -48,12 +57,23 @@ public class Advertisement {
         this.user = user;
     }
 
+    /**
+     * Sets the default expiration date for the advertisement before persisting it.
+     */
     @PrePersist
     public void setDefaultExpirationDate() {
         this.creationDate = LocalDate.now();
         this.expirationDate = creationDate.plusDays(10);
         System.out.println("Expiration Date: " + this.expirationDate);
 
+    }
 
+    /**
+     * Checks if the advertisement has expired based on the current date.
+     *
+     * @return true if the advertisement has expired, false otherwise.
+     */
+    public boolean hasExpired() {
+        return LocalDate.now().isAfter(expirationDate);
     }
 }

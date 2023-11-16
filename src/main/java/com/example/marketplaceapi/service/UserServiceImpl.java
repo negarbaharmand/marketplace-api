@@ -1,9 +1,8 @@
 package com.example.marketplaceapi.service;
 
-import com.example.marketplaceapi.converter.UserConverter;
+import com.example.marketplaceapi.converter.Converter;
 import com.example.marketplaceapi.domain.dto.AdDTOView;
 import com.example.marketplaceapi.domain.dto.UserDTOForm;
-import com.example.marketplaceapi.domain.dto.UserDTOView;
 import com.example.marketplaceapi.domain.entity.User;
 import com.example.marketplaceapi.exception.DataDuplicateException;
 import com.example.marketplaceapi.exception.DataNotFoundException;
@@ -19,13 +18,13 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final UserConverter userConverter;
+    private final Converter converter;
     private final CustomPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserConverter userConverter, CustomPasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, Converter converter, CustomPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.userConverter = userConverter;
+        this.converter = converter;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -35,16 +34,11 @@ public class UserServiceImpl implements UserService {
         boolean isExistEmail = userRepository.existsByEmail(userDTOForm.getEmail());
         if (isExistEmail) throw new DataDuplicateException("Email does already exist.");
 
-        User user = userConverter.toUser(userDTOForm);
+        User user = converter.toUser(userDTOForm);
         user.setPassword(passwordEncoder.encode(userDTOForm.getPassword()));
         return userRepository.save(user);
     }
 
-    @Override
-    public UserDTOView getByEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("Email does not exist."));
-        return userConverter.toDTOView(user);
-    }
 
     @Override
     public boolean authenticateUser(UserDTOForm userDTOForm) {
@@ -58,24 +52,13 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new DataNotFoundException("User not found"));
 
+        user.removeExpiredAdvertisements();
+
         return (user.getAdvertisements().stream()
-                .map(ad -> AdDTOView.builder()
-                        .adId(ad.getAdId())
-                        .title(ad.getTitle())
-                        .description(ad.getDescription())
-                        .creationDate(ad.getCreationDate())
-                        .expirationDate(ad.getExpirationDate())
-                        .build())
+                .map(converter::toAdDTOView)
                 .collect(Collectors.toList()));
 
 
-    }
-
-    @Override
-    public UserDTOView update(UserDTOForm userDTOForm) {
-        User user = userRepository.findByEmail(userDTOForm.getEmail()).orElseThrow(() -> new DataNotFoundException("User email is not valid."));
-
-        return userConverter.toDTOView(user);
     }
 
     private void isEmailTaken(String email) {

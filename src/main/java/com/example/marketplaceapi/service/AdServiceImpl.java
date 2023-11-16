@@ -55,22 +55,6 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public List<AdDTOView> getAllAds() {
-        List<Advertisement> advertisements = adRepository.findAll();
-        return advertisements.stream()
-                .map(adConverter::toAdDTOView)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public AdDTOView getAdById(String id) {
-        Advertisement ad = adRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Advertisement was not found"));
-
-        return adConverter.toAdDTOView(ad);
-
-    }
-
-    @Override
     public List<AdDTOView> getActiveAdvertisements() {
         List<Advertisement> activeAdvertisements = adRepository.findByActiveTrue();
         return activeAdvertisements.stream()
@@ -78,10 +62,21 @@ public class AdServiceImpl implements AdService {
                 .collect(Collectors.toList());
     }
 
+
     @Override
-    public void deleteAd(String id) {
-        adRepository.deleteById(id);
+    public List<AdDTOView> getAdsForDaysAgo(Integer daysAgo) {
+        try {
+            LocalDate start = LocalDate.now().minusDays(daysAgo);
+            LocalDate end = LocalDate.now();
+            List<Advertisement> adsBetween = adRepository.selectAdvertisementBetweenDates(start, end);
+            return adsBetween.stream()
+                    .map(adConverter::toAdDTOView)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new DataNotFoundException("No advertisement found in the period.");
+        }
     }
+
 
     @Scheduled(cron = "0 0 0 * * *") // This will run the task every day at midnight
     public void updateAdStatus() {
@@ -89,6 +84,10 @@ public class AdServiceImpl implements AdService {
         List<Advertisement> expiredAds = adRepository.findByExpirationDateAfterAndActiveTrue(currentDate);
 
         for (Advertisement ad : expiredAds) {
+            User user = ad.getUser();
+            if (user != null) {
+                user.removeAdvertisement(ad); //remove expired ads from users list
+            }
             ad.setActive(false);
         }
         adRepository.saveAll(expiredAds);

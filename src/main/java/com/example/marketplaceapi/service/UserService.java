@@ -17,13 +17,6 @@ public interface UserService {
 
     List<AdDTOView> getUserAdvertisements(String userEmail);
 
-    void disableByEmail(String email);
-
-    void enableByEmail(String email);
-
-    List<UserDTOView> findAll();
-
     UserDTOView update(UserDTOForm userDTOForm);
 
-    void delete(String id);
 }

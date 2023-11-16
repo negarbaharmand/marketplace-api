@@ -29,7 +29,6 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-
     @Override
     public User register(UserDTOForm userDTOForm) {
         if (userDTOForm == null) throw new IllegalArgumentException("user form is null.");
@@ -73,38 +72,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void disableByEmail(String email) {
-        isEmailTaken(email);
-        userRepository.updateExpiredByEmail(email, true);
-    }
-
-    @Override
-    public void enableByEmail(String email) {
-        isEmailTaken(email);
-        userRepository.updateExpiredByEmail(email, false);
-    }
-
-    @Override
-    public List<UserDTOView> findAll() {
-        List<User> users = userRepository.findAll();
-
-        return users.stream()
-                .map(userConverter::toDTOView)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public UserDTOView update(UserDTOForm userDTOForm) {
         User user = userRepository.findByEmail(userDTOForm.getEmail()).orElseThrow(() -> new DataNotFoundException("User email is not valid."));
 
         return userConverter.toDTOView(user);
-    }
-
-
-    @Override
-    public void delete(String id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new DataNotFoundException("User id is not valid."));
-        userRepository.delete(user);
     }
 
     private void isEmailTaken(String email) {

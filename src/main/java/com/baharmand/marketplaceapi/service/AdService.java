@@ -19,11 +19,6 @@ public interface AdService {
      */
     AdDTOView createAd(AdDTOForm adDTOForm);
 
-    /**
-     * Retrieves a list of active advertisements.
-     *
-     * @return List of active advertisements.
-     */
 
     /**
      * Updates an existing advertisement based on the provided form.
@@ -32,6 +27,12 @@ public interface AdService {
      * @return View representation of the updated advertisement.
      */
     AdDTOView updateAd(AdUpdateDTOForm adDTOForm);
+
+    /**
+     * Retrieves a list of active advertisements.
+     *
+     * @return List of active advertisements.
+     */
     List<AdDTOView> getActiveAdvertisements();
 
     /**
@@ -41,5 +42,14 @@ public interface AdService {
      * @return List of advertisements within the specified time frame.
      */
     List<AdDTOView> getAdsForDaysAgo(Integer daysAgo);
+    /**
+     * Checks if the advertisement belongs to user or not.
+     *
+     * @param adId The id associated with the advertisement
+     * @param userEmail User's email
+     * @return A boolean showing if the email matches the email associated withe advertisement or not
+     * */
+    boolean isAdvertisementBelongsToUser(String adId, String userEmail);
+
 
 }

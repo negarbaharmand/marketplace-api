@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,6 +82,7 @@ public class AdServiceImpl implements AdService {
         //4. Convert and return the updated advertisement
         return converter.toAdDTOView(updatedAd);
     }
+
     @Override
     public List<AdDTOView> getActiveAdvertisements() {
         List<Advertisement> activeAdvertisements = adRepository.findByActiveTrue();
@@ -104,4 +106,12 @@ public class AdServiceImpl implements AdService {
         }
     }
 
+    @Override
+    public boolean isAdvertisementBelongsToUser(String adId, String userEmail) {
+        Optional<Advertisement> optionalAdvertisement = adRepository.findById(adId);
+
+        return optionalAdvertisement.isPresent() &&
+                optionalAdvertisement.get().getUser().getEmail().equals(userEmail);
+
+    }
 }

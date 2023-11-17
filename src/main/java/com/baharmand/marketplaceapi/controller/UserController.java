@@ -59,6 +59,13 @@ public class UserController {
     public ResponseEntity<?> doUpdateAd(@Valid @RequestBody AdUpdateDTOForm adUpdateDTOForm) {
         try {
             authenticateUser(adUpdateDTOForm.getUser());
+            String userEmail = adUpdateDTOForm.getUser().getEmail();
+            String adId = adUpdateDTOForm.getAdId();
+
+            if (!adService.isAdvertisementBelongsToUser(adId, userEmail)) {
+                throw new AuthenticationException("User can't access this advertisement.");
+            }
+
             AdDTOView updatedAd = adService.updateAd(adUpdateDTOForm);
 
             return new ResponseEntity<>(updatedAd, HttpStatus.OK);

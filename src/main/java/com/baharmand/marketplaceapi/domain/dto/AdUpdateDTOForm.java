@@ -5,15 +5,17 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-/**
- * Data Transfer Object (DTO) for receiving input data to create a new advertisement.
- */
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdDTOForm {
+@Builder
+public class AdUpdateDTOForm {
+    /**
+     * Unique identifier for the advertisement.
+     */
+    @NotBlank(message = "Advertisement's id cannot be null.")
+    private String adId;
 
     /**
      * Title of the advertisement.
@@ -32,6 +34,4 @@ public class AdDTOForm {
     @Valid
     @NotNull(message = "User cannot be blank")
     private UserDTOForm user;
-
-
 }

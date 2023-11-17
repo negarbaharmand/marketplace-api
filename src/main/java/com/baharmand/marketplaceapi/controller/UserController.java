@@ -1,7 +1,11 @@
 package com.baharmand.marketplaceapi.controller;
 
+import com.baharmand.marketplaceapi.converter.Converter;
 import com.baharmand.marketplaceapi.domain.dto.AdDTOView;
+import com.baharmand.marketplaceapi.domain.dto.AdUpdateDTOForm;
 import com.baharmand.marketplaceapi.domain.dto.UserDTOForm;
+import com.baharmand.marketplaceapi.exception.AuthenticationException;
+import com.baharmand.marketplaceapi.service.AdServiceImpl;
 import com.baharmand.marketplaceapi.service.UserServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +23,14 @@ import java.util.List;
 public class UserController {
 
     private final UserServiceImpl userService;
+    private final AdServiceImpl adService;
 
     @Autowired
-    public UserController(UserServiceImpl userService) {
+    public UserController(UserServiceImpl userService, AdServiceImpl adService) {
         this.userService = userService;
+        this.adService = adService;
     }
+
 
     /**
      * <p>Authenticates a user and retrieves associated advertisements.</p>
@@ -32,13 +39,46 @@ public class UserController {
      * @return List of advertisements if authentication is successful, otherwise UNAUTHORIZED status.
      */
     @PostMapping("/authenticate")
-    public ResponseEntity<List<AdDTOView>> doAuthenticateAndRetrieveAds(@Valid @RequestBody UserDTOForm userDTOForm) {
-        boolean isAuthenticated = userService.authenticateUser(userDTOForm);
-        if (!isAuthenticated) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<?> doAuthenticateAndRetrieveAds(@Valid @RequestBody UserDTOForm userDTOForm) {
+        try {
+            authenticateUser(userDTOForm);
+            List<AdDTOView> userAds = userService.getUserAdvertisements(userDTOForm.getEmail());
+            return new ResponseEntity<>(userAds, HttpStatus.OK);
+        } catch (AuthenticationException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    /**
+     * Updates an advertisement after authenticating the user.
+     *
+     * @param adUpdateDTOForm Form containing updated advertisement details and user credentials.
+     * @return Updated advertisement if authentication is successful, otherwise UNAUTHORIZED status.
+     */
+    @PostMapping("/update")
+    public ResponseEntity<?> doUpdateAd(@Valid @RequestBody AdUpdateDTOForm adUpdateDTOForm) {
+        try {
+            authenticateUser(adUpdateDTOForm.getUser());
+            String userEmail = adUpdateDTOForm.getUser().getEmail();
+            String adId = adUpdateDTOForm.getAdId();
+
+            if (!adService.isAdvertisementBelongsToUser(adId, userEmail)) {
+                throw new AuthenticationException("User can't access this advertisement.");
+            }
+
+            AdDTOView updatedAd = adService.updateAd(adUpdateDTOForm);
+
+            return new ResponseEntity<>(updatedAd, HttpStatus.OK);
+        } catch (AuthenticationException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         }
 
-        List<AdDTOView> userAds = userService.getUserAdvertisements(userDTOForm.getEmail());
-        return new ResponseEntity<>(userAds, HttpStatus.OK);
+    }
+
+    private void authenticateUser(UserDTOForm userDTOForm) {
+        boolean isAuthenticated = userService.authenticateUser(userDTOForm);
+        if (!isAuthenticated) {
+            throw new AuthenticationException("Authentication failed");
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.baharmand.marketplaceapi.converter.Converter;
 import com.baharmand.marketplaceapi.domain.dto.AdDTOView;
 import com.baharmand.marketplaceapi.domain.dto.UserDTOForm;
 import com.baharmand.marketplaceapi.domain.entity.User;
+import com.baharmand.marketplaceapi.exception.AuthenticationException;
 import com.baharmand.marketplaceapi.exception.DataDuplicateException;
 import com.baharmand.marketplaceapi.exception.DataNotFoundException;
 import com.baharmand.marketplaceapi.repository.UserRepository;
@@ -42,9 +43,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean authenticateUser(UserDTOForm userDTOForm) {
-        User user = userRepository.findByEmail(userDTOForm.getEmail()).orElseThrow(() -> new ArithmeticException("User not found"));
+        User user = userRepository.findByEmail(userDTOForm.getEmail()).orElseThrow(() -> new AuthenticationException("User not found"));
 
-        return passwordEncoder.matches(userDTOForm.getPassword(), user.getPassword());
+        if (!passwordEncoder.matches(userDTOForm.getPassword(), user.getPassword())) {
+            throw new AuthenticationException("Incorrect password.");
+        }
+        return true;
     }
 
     @Override

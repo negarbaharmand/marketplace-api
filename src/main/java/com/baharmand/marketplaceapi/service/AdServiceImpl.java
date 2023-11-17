@@ -3,12 +3,14 @@ package com.baharmand.marketplaceapi.service;
 import com.baharmand.marketplaceapi.converter.Converter;
 import com.baharmand.marketplaceapi.domain.dto.AdDTOForm;
 import com.baharmand.marketplaceapi.domain.dto.AdDTOView;
+import com.baharmand.marketplaceapi.domain.dto.AdUpdateDTOForm;
 import com.baharmand.marketplaceapi.domain.entity.Advertisement;
 import com.baharmand.marketplaceapi.domain.entity.User;
 import com.baharmand.marketplaceapi.exception.AuthenticationException;
 import com.baharmand.marketplaceapi.exception.DataNotFoundException;
 import com.baharmand.marketplaceapi.repository.AdRepository;
 import com.baharmand.marketplaceapi.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,6 +65,22 @@ public class AdServiceImpl implements AdService {
 
     }
 
+    @Override
+    public AdDTOView updateAd(AdUpdateDTOForm adDTOForm) {
+        //1. Retrieve the existing advertisement
+        Advertisement existingAd = adRepository.findById(adDTOForm.getAdId())
+                .orElseThrow(() -> new EntityNotFoundException("Advertisement not found"));
+
+        //2. Update the fields
+        existingAd.setTitle(adDTOForm.getTitle());
+        existingAd.setDescription(adDTOForm.getDescription());
+
+        //3. Save the updated advertisement
+        Advertisement updatedAd = adRepository.save(existingAd);
+
+        //4. Convert and return the updated advertisement
+        return converter.toAdDTOView(updatedAd);
+    }
     @Override
     public List<AdDTOView> getActiveAdvertisements() {
         List<Advertisement> activeAdvertisements = adRepository.findByActiveTrue();

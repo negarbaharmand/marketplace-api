@@ -2,6 +2,7 @@ package com.baharmand.marketplaceapi.service;
 
 import com.baharmand.marketplaceapi.domain.dto.AdDTOForm;
 import com.baharmand.marketplaceapi.domain.dto.AdDTOView;
+import com.baharmand.marketplaceapi.domain.dto.AdUpdateDTOForm;
 
 import java.util.List;
 
@@ -23,6 +24,14 @@ public interface AdService {
      *
      * @return List of active advertisements.
      */
+
+    /**
+     * Updates an existing advertisement based on the provided form.
+     *
+     * @param adDTOForm Form containing information for updating the advertisement.
+     * @return View representation of the updated advertisement.
+     */
+    AdDTOView updateAd(AdUpdateDTOForm adDTOForm);
     List<AdDTOView> getActiveAdvertisements();
 
     /**

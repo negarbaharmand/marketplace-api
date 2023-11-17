@@ -3,14 +3,16 @@ package com.baharmand.marketplaceapi.domain.dto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 /**
  * Data Transfer Object (DTO) for receiving input data to create a new advertisement.
  */
-@Data
+@Getter
+@Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AdDTOForm {
 
     /**

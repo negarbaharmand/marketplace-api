@@ -73,8 +73,8 @@ public class AdServiceImpl implements AdService {
                 .orElseThrow(() -> new EntityNotFoundException("Advertisement not found"));
 
         //2. Update the fields
-        existingAd.setTitle(adDTOForm.getTitle());
-        existingAd.setDescription(adDTOForm.getDescription());
+        existingAd.setTitle(adDTOForm.getAdDetails().getTitle());
+        existingAd.setDescription(adDTOForm.getAdDetails().getDescription());
 
         //3. Save the updated advertisement
         Advertisement updatedAd = adRepository.save(existingAd);

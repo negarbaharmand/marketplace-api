@@ -58,8 +58,8 @@ public class UserController {
     @PostMapping("/update")
     public ResponseEntity<?> doUpdateAd(@Valid @RequestBody AdUpdateDTOForm adUpdateDTOForm) {
         try {
-            authenticateUser(adUpdateDTOForm.getUser());
-            String userEmail = adUpdateDTOForm.getUser().getEmail();
+            authenticateUser(adUpdateDTOForm.getAdDetails().getUser());
+            String userEmail = adUpdateDTOForm.getAdDetails().getUser().getEmail();
             String adId = adUpdateDTOForm.getAdId();
 
             if (!adService.isAdvertisementBelongsToUser(adId, userEmail)) {

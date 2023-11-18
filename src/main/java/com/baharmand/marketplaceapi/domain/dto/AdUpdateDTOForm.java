@@ -18,20 +18,9 @@ public class AdUpdateDTOForm {
     private String adId;
 
     /**
-     * Title of the advertisement.
-     */
-    @NotBlank(message = "Title cannot be blank")
-    private String title;
-    /**
-     * Description of the advertisement.
-     */
-    @NotBlank(message = "Description cannot be blank")
-    private String description;
-
-    /**
-     * User associated with the advertisement.
+     * AdDTOForm containing title, description, and user information.
      */
     @Valid
-    @NotNull(message = "User cannot be blank")
-    private UserDTOForm user;
+    @NotNull(message = "Ad details cannot be null")
+    private AdDTOForm adDetails;
 }

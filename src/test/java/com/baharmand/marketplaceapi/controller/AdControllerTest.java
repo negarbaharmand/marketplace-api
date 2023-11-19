@@ -18,6 +18,9 @@ import org.springframework.http.ResponseEntity;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for the {@link AdController} class.
+ */
 @ExtendWith(MockitoExtension.class)
 public class AdControllerTest {
     @Mock
@@ -29,7 +32,10 @@ public class AdControllerTest {
     @InjectMocks
     private AdController adController;
 
-
+    /**
+     * Tests the behavior of {@link AdController#doCreateAd(AdDTOForm)} when an invalid AdDTOForm is provided.
+     * Expects a response with HTTP status code 400 (Bad Request).
+     */
     @Test
     void doCreateAd_InvalidAdDTOForm_ShouldReturnBadRequest() {
         UserDTOForm user = new UserDTOForm("user@test.com", "password");
@@ -44,6 +50,10 @@ public class AdControllerTest {
         verify(adService).createAd(adDTOForm);
     }
 
+    /**
+     * Tests the behavior of {@link AdController#doCreateAd(AdDTOForm)} when a {@link DataDuplicateException} occurs.
+     * Expects a thrown exception with the message "Duplicate advertisement" and a response with HTTP status code 409 (Conflict).
+     */
     @Test
     void doCreateAd_DataDuplicateException_ShouldReturnConflict() {
         UserDTOForm user = new UserDTOForm("user@test.com", "password");

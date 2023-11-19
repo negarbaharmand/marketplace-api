@@ -20,6 +20,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for the {@link UserController} class, which validates the behavior
+ * of the controller responsible for handling user-related operations.
+ * Uses Mockito for mocking dependencies and ensuring the proper functioning of
+ * methods under different scenarios.
+ */
 @ExtendWith(MockitoExtension.class)
 public class UserControllerTest {
     @Mock
@@ -31,6 +37,10 @@ public class UserControllerTest {
     @InjectMocks
     private UserController userController;
 
+    /**
+     * Tests the successful authentication of a user and retrieval of advertisements.
+     * Expects a response with HTTP status code 200 (OK).
+     */
     @Test
     public void testDoAuthenticateAndRetrieveAds_Success() {
         // Mocking the behavior of the userService
@@ -49,6 +59,10 @@ public class UserControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
+    /**
+     * Tests the scenario where user authentication fails.
+     * Expects a response with HTTP status code 401 (Unauthorized).
+     */
     @Test
     public void testDoAuthenticateAndRetrieveAds_AuthenticationFailure() {
         when(userService.authenticateUser(any())).thenThrow(new AuthenticationException("Authentication failed"));

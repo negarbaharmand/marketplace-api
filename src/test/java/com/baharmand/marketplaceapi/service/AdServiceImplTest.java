@@ -17,10 +17,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for the {@link AdServiceImpl} class, focusing on validating
+ * the functionality of methods related to advertisement creation and retrieval.
+ * Uses the {@link MockitoExtension} for simplified Mockito integration with JUnit 5.
+ */
 @ExtendWith(MockitoExtension.class)
 class AdServiceImplTest {
 
@@ -36,10 +42,13 @@ class AdServiceImplTest {
     @InjectMocks
     private AdServiceImpl adService;
 
-    @BeforeEach
-    void setUp() {
-    }
 
+    /**
+     * Tests the {@link AdServiceImpl#createAd(AdDTOForm)} method with a valid
+     * {@link AdDTOForm}. Verifies that the service correctly processes the form,
+     * registers the user, saves the advertisement, and returns the created
+     * advertisement as a {@link AdDTOView}.
+     */
     @Test
     void createAd_ValidAdDTOForm_ShouldReturnAdDTOView() {
         AdDTOForm adDTOForm = new AdDTOForm();
@@ -58,7 +67,7 @@ class AdServiceImplTest {
         when(userService.register(userDTOForm)).thenReturn(user);
         when(converter.toAdvertisement(adDTOForm)).thenReturn(advertisement);
         when(adRepository.save(any(Advertisement.class))).thenReturn(advertisement);
-        when(converter.toAdDTOView(advertisement)).thenReturn(new AdDTOView(advertisement.getAdId(), advertisement.getTitle(), advertisement.getDescription(),advertisement.getCreationDate(),advertisement.getExpirationDate(),advertisement.getUser().getEmail()));
+        when(converter.toAdDTOView(advertisement)).thenReturn(new AdDTOView(advertisement.getAdId(), advertisement.getTitle(), advertisement.getDescription(), advertisement.getCreationDate(), advertisement.getExpirationDate(), advertisement.getUser().getEmail()));
 
         AdDTOView createdAd = adService.createAd(adDTOForm);
 
@@ -72,6 +81,12 @@ class AdServiceImplTest {
         verify(adRepository).save(any(Advertisement.class));
         verify(converter).toAdDTOView(advertisement);
     }
+
+    /**
+     * Tests the {@link AdServiceImpl#getActiveAdvertisements()} method to ensure
+     * that it correctly retrieves a list of active advertisements and converts
+     * them into a list of {@link AdDTOView}s.
+     */
     @Test
     void getActiveAdvertisements_ShouldReturnListOfAdDTOView() {
         Advertisement ad1 = new Advertisement("Ad1", "Description 1", new User());
@@ -82,7 +97,7 @@ class AdServiceImplTest {
         activeAds.add(ad2);
 
         when(adRepository.findByActiveTrue()).thenReturn(activeAds);
-        when(converter.toAdDTOView(ad1)).thenReturn(new AdDTOView(ad1.getAdId(), ad1.getTitle(), ad1.getDescription(), ad1.getCreationDate(),ad1.getExpirationDate(),ad1.getUser().getEmail()));
+        when(converter.toAdDTOView(ad1)).thenReturn(new AdDTOView(ad1.getAdId(), ad1.getTitle(), ad1.getDescription(), ad1.getCreationDate(), ad1.getExpirationDate(), ad1.getUser().getEmail()));
         when(converter.toAdDTOView(ad2)).thenReturn(new AdDTOView(ad2.getAdId(), ad2.getTitle(), ad2.getDescription(), ad2.getCreationDate(), ad2.getExpirationDate(), ad2.getUser().getEmail()));
 
         List<AdDTOView> activeAdDTOs = adService.getActiveAdvertisements();

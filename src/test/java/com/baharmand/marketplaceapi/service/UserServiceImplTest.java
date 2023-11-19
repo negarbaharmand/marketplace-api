@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -20,6 +21,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 
+/**
+ * Unit tests for the {@link UserServiceImpl} class, focusing on validating
+ * the functionality of methods related to user registration.
+ * Uses the {@link MockitoExtension} for simplified Mockito integration with JUnit 5.
+ */
 @ExtendWith(MockitoExtension.class)
 public class UserServiceImplTest {
 
@@ -35,10 +41,12 @@ public class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService;
 
-    @BeforeEach
-    void setUp() {
-    }
 
+    /**
+     * Tests the {@link UserServiceImpl#register(UserDTOForm)} method with a valid
+     * {@link UserDTOForm}. Verifies that the service correctly processes the form,
+     * encodes the password, saves the user, and returns the registered user.
+     */
     @Test
     void register_ValidUserDTOForm_ShouldReturnRegisteredUser() {
         UserDTOForm userDTOForm = new UserDTOForm("test@example.com", "password");
@@ -61,6 +69,11 @@ public class UserServiceImplTest {
         verify(userRepository).save(user);
     }
 
+    /**
+     * Tests the {@link UserServiceImpl#register(UserDTOForm)} method to ensure
+     * that it throws a {@link DataDuplicateException} when attempting to register
+     * a user with a duplicate email address.
+     */
     @Test
     void register_DuplicateUserEmail_ShouldThrowDataDuplicateException() {
         UserDTOForm userDTOForm = new UserDTOForm("test@example.com", "password");

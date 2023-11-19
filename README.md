@@ -40,3 +40,11 @@ Explore the API using the Swagger Documentation available locally. To view the S
 
 Feel free to use the Swagger documentation to understand and interact with the Marketplace API's capabilities.
 
+## Javadoc Documentation
+
+Explore the detailed documentation for this project using Javadoc. The Javadoc provides comprehensive information about the classes, methods, and overall structure of the codebase.
+
+- [Javadoc Documentation](https://negarbaharmand.com/marketplace-docs/index.html)
+
+Feel free to refer to the Javadoc documentation for a deeper understanding of the project's architecture and implementation details.
+
